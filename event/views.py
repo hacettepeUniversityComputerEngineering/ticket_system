@@ -1,13 +1,12 @@
-from audioop import reverse
-
-from django.shortcuts import render
 from event.forms import SearchForm
 from event.models import Event, Category
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
 
 
 def store_database():
-    event_list = open("txt_files/events.txt","r").read().split("\n\n")
+    event_list = open("txt_files/events.txt", "r").read().split("\n\n")
     for event in event_list:
         split_list = event.split("\n")
         for i in split_list:
@@ -32,10 +31,7 @@ def store_database():
         Category.objects.update_or_create(name="tiyatro")
         Category.objects.update_or_create(name="sinema")
         this_category = Category.objects.get(name=event_category)
-        Event.objects.update_or_create(name=event_name,category_name=this_category)
-
-
-
+        Event.objects.update_or_create(name=event_name, category_name=this_category)
 
 
 # Create your views here.
@@ -59,3 +55,18 @@ def call_home(request):
                 return redirect('home_page')
 
     return render(request, 'home.html', {"form": form, "all_events": all_events})
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            raw_password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home_page')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
