@@ -1,49 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
-
-    {#    <section class="callout">#}
-    {#        <div class="container text-center">#}
-    {##}
-    {#        </div>#}
-    {#    </section>#}
-
     <section class="content-section">
         <div class="container">
+            <form method="POST" class="post-form mb-5">
+                {% csrf_token %}
+                <div class="col-md-8 offset-2 mb-4">
+                    {{ form.as_p }}
+                    <button type="submit" class="save btn btn-default col-md-4 offset-4">Search</button>
+                </div>
+            </form>
+        </div>
+        <div class="container">
             <div class="card-deck">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional
-                            content. This content is a little bit longer.</p>
+                {% for event in all_events %}
+                    <div class="col-sm-4">
+                        <div class="card mb-4">
+                            <div class="card-body ">
+                                <a href="{% url 'event_details' pk=event.pk %}">
+                                    <h5 class="card-title">{{ event.name }}</h5>
+                                    <p class="card-text">This is a wider card with supporting text below as a natural
+                                        lead-in to
+                                        additional
+                                        content. This content is a little bit longer.</p>
+                                </a>
+                            </div>
+                            <div class="card-footer">
+                                <small class="text-muted">Last updated 3 mins ago</small>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Last updated 3 mins ago</small>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional
-                            content. This content is a little bit longer.</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Last updated 3 mins ago</small>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Card title</h5>
-                        <p class="card-text">This is a wider card with supporting text below as a natural lead-in to
-                            additional
-                            content. This content is a little bit longer.</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">Last updated 3 mins ago</small>
-                    </div>
-                </div>
+                {% endfor %}
+
+
             </div>
+        </div>
         </div>
     </section>
 {% endblock %}
