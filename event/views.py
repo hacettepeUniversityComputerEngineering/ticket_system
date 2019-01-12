@@ -1,9 +1,13 @@
+
 from event.forms import SearchForm
 from event.models import Event, Category
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from .models import Category, Event, CityEvent, Seance, Salon, Actor
 
 def store_database():
     event_list = open("txt_files/events.txt", "r").read().split("\n\n")
@@ -34,9 +38,8 @@ def store_database():
         Event.objects.update_or_create(name=event_name, category_name=this_category)
 
 
-# Create your views here.
-def event_details(request, pk):
-    return render(request, 'event_details.html', {})
+
+
 
 
 def call_home(request):
@@ -55,6 +58,21 @@ def call_home(request):
                 return redirect('home_page')
 
     return render(request, 'home.html', {"form": form, "all_events": all_events})
+
+
+
+def event_details(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
+    actors = Actor.objects.filter(event__pk=pk)
+    for city in cities:
+        print(city.event.name)
+    seances = Seance.objects.all()
+    return render(request, 'event_details.html', {'event': event,
+                                                  'cities': cities,
+                                                  'seances': seances,
+                                                  'actors': actors})
+
 
 
 def signup(request):

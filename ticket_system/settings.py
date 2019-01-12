@@ -28,6 +28,8 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+LOGIN_REDIRECT_URL = 'event_page'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
