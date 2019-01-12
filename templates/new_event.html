@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="content-section">
+        <div class="container">
+            <form method="POST" class="post-form mb-5">
+                {% csrf_token %}
+                <div class="row mb-3">{{ new_event_form.event_name }}</div>
+                <div class="row mb-3">{{ new_event_form.category_name }}</div>
+                <div class="row mb-3">{{ new_event_form.event_owner }}</div>
+                <div class="row mb-5">{{ new_event_form.director }}</div>
+                <div class="row mb-3">
+                    <button type="submit" name="city_category" class="btn btn-dark">Add New Event</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
+{##}
+{# name = models.CharField(max_length=200)#}
+{#    poster = models.ImageField#}
+{#    category_name = models.ForeignKey(Category, on_delete=models.CASCADE)#}
+{#    event_owner = models.ForeignKey(EventOwner, on_delete=models.CASCADE)#}
+{#    director = models.ForeignKey(Director, on_delete=models.CASCADE)#}
+{##}
+{#city = models.ForeignKey(City, on_delete=models.CASCADE)#}
+{#building = models.ForeignKey(Building, on_delete=models.CASCADE)#}
+{#salon = models.ForeignKey(Salon, on_delete=models.CASCADE)#}

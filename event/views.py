@@ -1,8 +1,9 @@
-from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm
+from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm, NewEventForm, \
+    NewActorForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, Event, CityEvent, Seance, Salon, Actor, City
+from .models import Category, Event, CityEvent, Seance, Salon, Actor, City, Schedule, Director, EventOwner,ActorEvent
 
 
 # her etkinliğin fiyatı olmalı
@@ -41,14 +42,36 @@ def call_home(request):
 def event_details(request, pk):
     event = get_object_or_404(Event, pk=pk)
     cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
-    actors = Actor.objects.filter(event__pk=pk)
+    actor_events = ActorEvent.objects.filter(event__pk=pk)
+    actors = []
+    for ae in actor_events:
+        actors.append(Actor.objects.filter(pk=ae.actor.pk))
+
     for city in cities:
         print(city.event.name)
     seances = Seance.objects.all()
+    new_actor_form = NewActorForm()
+    if request.method == 'POST':
+        new_actor_form = NewActorForm(request.POST)
+        if new_actor_form.is_valid():
+            actor_name = new_actor_form.cleaned_data['actor_name']
+            create_new_actor(actor_name, pk)
     return render(request, 'event_details.html', {'event': event,
                                                   'cities': cities,
                                                   'seances': seances,
-                                                  'actors': actors})
+                                                  'actors': actors,
+                                                  'new_actor_form': new_actor_form,
+                                                  })
+
+
+def create_new_actor(name, event_pk):
+    this_event = Event.objects.get(pk=event_pk)
+    try:
+        this_actor = Actor.objects.get(name=name)
+    except:
+        Actor.objects.update_or_create(name=name, event=this_event)
+        this_actor = Actor.objects.get(name=name, event=this_event)
+    ActorEvent.objects.update_or_create(event=this_event,actor=this_actor)
 
 
 # seda
@@ -102,3 +125,35 @@ def payment(request):
             last_usage_date = payment_form.cleaned_data['last_usage_date']
             security_number = payment_form.cleaned_data['security_number']
     return render(request, 'payment_screen.html', {'payment_form': payment_form})
+
+
+def schedule(request):
+    Schedule.objects.filter()
+
+
+def new_event(request):
+    new_event_form = NewEventForm()
+    if request.method == 'POST':
+        new_event_form = NewEventForm(request.POST)
+        if new_event_form.is_valid():
+            event_name = new_event_form.cleaned_data['event_name']
+            category_name = new_event_form.cleaned_data['category_name']
+            event_owner = new_event_form.cleaned_data['event_owner']
+            director = new_event_form.cleaned_data['director']
+            create_new_event(event_name, category_name, event_owner, director)
+    return render(request, 'new_event.html', {'new_event_form': new_event_form})
+
+
+def create_new_event(event_name, category_name, event_owner, director):
+    Director.objects.update_or_create(name=director)
+    this_director = Director.objects.get(name=director)
+
+    EventOwner.objects.update_or_create(name=event_owner)
+    this_owner = EventOwner.objects.get(name=event_owner)
+
+    Category.objects.update_or_create(name=category_name)
+    this_category = Category.objects.get(name=category_name)
+
+    print(this_category)
+    Event.objects.update_or_create(name=event_name, director=this_director, event_owner=this_owner,
+                                   category_name=this_category)

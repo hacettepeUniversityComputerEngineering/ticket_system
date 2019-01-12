@@ -5,20 +5,23 @@
             <div class="row">
                 <div class="col-sm-6">
                     <div class="card  mb-3">
-                         <div class="card-footer">
-                                <small class="text-muted">
-                                    Kategori: {{ event.category_name.name }}
-                                </small>
-                            </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                Kategori: {{ event.category_name.name }}
+                            </small>
+                        </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ event.name }}</h5>
                             <p class="card-text">
-                                <p> Yönetmen: {{ event.director.name  }}</p>
-                                <h6>Oyuncular</h6>
-                                {% for actor in actors %}
-                                    <p>{{ actor.name }}</p>
-                                {% endfor %}
-                            </p>
+                            <p> Yönetmen: {{ event.director.name }}</p>
+                            <h6>Oyuncular</h6>
+                            {% for actor in actors %}
+                                <p>{{ actor.name }}</p>
+                            {% endfor %}
+                            <form method="POST" class="post-form">
+                                {% csrf_token %}
+                                {{ new_actor_form }}
+                            </form>
                         </div>
                     </div>
                     <div class="card mb-2">
@@ -33,22 +36,26 @@
                 </div>
                 <div class="col-sm-6">
                     {% for city in cities %}
-                    <div class="card mb-8">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ city.city.name }} </h5>
-                            <h6 class="card-text">{{ city.building }}</h6>
-                            <p> Salon: {{ city.salon }}</p>
-                            <p>Seanslar:</p>
-                            {% for seance in seances %}
-                            {% if seance.salon == city.salon %}
-                                <p> {{ seance.time.date}}  {{ seance.time.time }} <a href="#"><button class="btn btn-outline-secondary" type="submit" id="button-addon2">Bilet Al</button></a></p>
-                            {% endif %}
-                            {% endfor %}
+                        <div class="card mb-8">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ city.city.name }} </h5>
+                                <h6 class="card-text">{{ city.building }}</h6>
+                                <p> Salon: {{ city.salon }}</p>
+                                <p>Seanslar:</p>
+                                {% for seance in seances %}
+                                    {% if seance.salon == city.salon %}
+                                        <p> {{ seance.time.date }} {{ seance.time.time }} <a href="#">
+                                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                                                Bilet Al
+                                            </button>
+                                        </a></p>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
                     {% endfor %}
                 </div>
-                
+
             </div>
         </div>
     </section>

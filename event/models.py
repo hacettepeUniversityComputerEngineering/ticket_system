@@ -61,17 +61,19 @@ class Event(models.Model):
 
 class Actor(models.Model):
     name = models.CharField(max_length=200)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def _str_(self):
         return self.name
+
+
+class ActorEvent(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
 
 
 class CityEvent(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
-    building = models.ForeignKey(Building, on_delete=models.CASCADE)
-    salon = models.ForeignKey(Salon, on_delete=models.CASCADE)
 
 
 class Schedule(models.Model):

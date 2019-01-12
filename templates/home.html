@@ -13,6 +13,7 @@
             </form>
         </div>
         <div class="container">
+            <a class="btn btn-success col-sm-2 offset-10 mb-5" href="{% url 'new_event' %}" role="button">New Event</a>
             <div class="card-deck">
                 {% for event in all_events %}
                     <div class="col-sm-4">

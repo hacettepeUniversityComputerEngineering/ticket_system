@@ -10,5 +10,6 @@ urlpatterns = [
     url(r'^signup/$', views.signup, name='signup'),
     path('buy_ticket',views.buy_ticket,name='buy_ticket'),
     path('payment_screen',views.payment,name='payment_screen'),
+    path('new_event',views.new_event,name='new_event')
 
 ]

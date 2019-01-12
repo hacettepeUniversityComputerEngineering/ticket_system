@@ -81,3 +81,39 @@ class PaymentForm(forms.Form):
             'placeholder': 'Security Number',
         }
     ))
+
+
+class NewEventForm(forms.Form):
+    event_name = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Event Name',
+        }
+    ))
+    category_name = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Category Name',
+        }
+    ))
+    event_owner = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Event Owner',
+        }
+    ))
+    director = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Director',
+        }
+    ))
+
+
+class NewActorForm(forms.Form):
+    actor_name = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Actor Name Surname',
+        }
+    ))
