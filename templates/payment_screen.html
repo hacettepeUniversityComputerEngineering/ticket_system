@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block content %}
+    <section class="content-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 offset-8">
+                    <div class="row">
+                        <h1>Total:32</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-sm-8 offset-2">
+                <div class="card-body">
+                    <form method="POST" class="post-form mb-5">
+                        {% csrf_token %}
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                {{ payment_form.name_surname }}
+                            </div>
+                            <div class="col-sm-6">
+                                {{ payment_form.tckn }}
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                {{ payment_form.e_mail }}
+                            </div>
+                            <div class="col-sm-6">
+                                {{ payment_form.credit_card_numbers }}
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-sm-6">
+                                {{ payment_form.phone_number }}
+                            </div>
+                            <div class="col-sm-3">
+                                {{ payment_form.last_usage_date }}
+                            </div>
+                            <div class="col-sm-3">
+                                {{ payment_form.security_number }}
+                            </div>
+                        </div>
+                        <button type="submit" name="city_category" class="btn btn-dark col-sm-8 offset-2">Payment</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+

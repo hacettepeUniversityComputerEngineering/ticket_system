@@ -1,9 +1,12 @@
-from event.forms import SearchForm, SelectCategory, SelectCity
+from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import Category, Event, CityEvent, Seance, Salon, Actor, City
 
+
+# her etkinliğin fiyatı olmalı
+# her etkinlik için açıklama attribute'u ekle
 
 # elmas
 def call_home(request):
@@ -73,3 +76,29 @@ def get_events(city_name, category_name):
             if ce.event == event:
                 selected_events.append(event)
     return selected_events
+
+
+def buy_ticket(request):
+    # event = Event.objects.all(pk=pk)
+    person_count_form = SelectPersonCount()
+    if request.method == 'POST':
+        person_count_form = SelectPersonCount(request.POST)
+        if person_count_form.is_valid():
+            person_count = person_count_form.cleaned_data['person_count']
+            print(person_count)
+    return render(request, 'buy_ticket.html', {'person_count_form': person_count_form})
+
+
+def payment(request):
+    payment_form = PaymentForm()
+    if request.method == 'POST':
+        payment_form = PaymentForm(request.POST)
+        if payment_form.is_valid():
+            name_surname = payment_form.cleaned_data['name_surname']
+            tckn = payment_form.cleaned_data['tckn']
+            e_mail = payment_form.cleaned_data['e_mail']
+            credit_card_number = payment_form.cleaned_data['credit_card_numbers']
+            phone_number = payment_form.cleaned_data['phone_number']
+            last_usage_date = payment_form.cleaned_data['last_usage_date']
+            security_number = payment_form.cleaned_data['security_number']
+    return render(request, 'payment_screen.html', {'payment_form': payment_form})
