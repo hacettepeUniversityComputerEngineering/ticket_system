@@ -4,10 +4,12 @@
         <div class="container">
             <form method="POST" class="post-form mb-5">
                 {% csrf_token %}
-                <div class="col-md-8 offset-2 mb-4">
-                    {{ form.as_p }}
-                    <button type="submit" class="save btn btn-default col-md-4 offset-4">Search</button>
+                <div class="row mb-3">
+                    <div class="col-sm-4">{{ city_form }}</div>
+                    <div class="col-sm-4">{{ category_name }}</div>
                 </div>
+                <button type="submit" name="city_category" class="btn btn-dark">Search
+                </button>
             </form>
         </div>
         <div class="container">
@@ -30,10 +32,7 @@
                         </div>
                     </div>
                 {% endfor %}
-
-
             </div>
-        </div>
         </div>
     </section>
 {% endblock %}

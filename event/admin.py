@@ -1,8 +1,5 @@
 from django.contrib import admin
-from event.models import Event,Category
 
-admin.site.register(Event)
-admin.site.register(Category)
 
 from .models import Category, EventOwner, Director, Actor, City, Building, Event, Schedule, Salon, Date, Seance, Block, Seat, CityEvent
 
