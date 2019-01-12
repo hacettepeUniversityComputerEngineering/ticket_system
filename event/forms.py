@@ -1,4 +1,5 @@
 from django import forms
+from event.models import Category, City
 
 
 class SearchForm(forms.Form):
@@ -11,14 +12,20 @@ class SearchForm(forms.Form):
 
 
 class SelectCategory(forms.Form):
-    CHOICES = (('1', 'First',), ('2', 'Second',))
-    name = forms.ChoiceField(widget=forms.Select(attrs={
-            'class': 'input-group',
-        }), choices=CHOICES)
+    CHOICES = ()
+    categories = tuple(Category.objects.all().values_list())
+    for i in categories:
+        CHOICES = ((i[1], i[1]),) + CHOICES
+    category_name = forms.ChoiceField(widget=forms.Select(attrs={
+        'class': 'input-group',
+    }), choices=CHOICES)
 
 
 class SelectCity(forms.Form):
-    CHOICES = (('1', 'First',), ('2', 'Second',))
-    name = forms.ChoiceField(widget=forms.Select(attrs={
+    CHOICES = ()
+    cities = tuple(City.objects.all().values_list())
+    for i in cities:
+        CHOICES = ((i[1], i[1]),) + CHOICES
+    city_name = forms.ChoiceField(widget=forms.Select(attrs={
         'class': 'input-group',
     }), choices=CHOICES)
