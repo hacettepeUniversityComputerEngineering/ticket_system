@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Category, EventOwner, Director, Actor, City, Building, Event, Schedule, Salon, Date, Seance, Block, Seat, CityEvent
+from .models import Category, EventOwner, Director, Actor, City, Building, Event, Schedule, Salon,  Seance, Block, Seat, CityEvent
 
 admin.site.register(Event)
 admin.site.register(EventOwner)
@@ -12,7 +12,6 @@ admin.site.register(City)
 admin.site.register(Building)
 admin.site.register(Schedule)
 admin.site.register(Salon)
-admin.site.register(Date)
 admin.site.register(Seance)
 admin.site.register(Block)
 admin.site.register(Seat)

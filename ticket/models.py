@@ -1,5 +1,5 @@
 from django.db import models
-from event.models import Salon, Block, Seat, Date, Event
+from event.models import Salon, Block, Seat, Event
 from user.models import User
 # Create your models here.
 

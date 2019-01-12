@@ -83,14 +83,10 @@ class Schedule(models.Model):
     publishing_date_of_schedule = models.TimeField()
 
 
-class Date(models.Model):
-    date = models.DateField()
-    time = models.TimeField()
-
-
 class Seance(models.Model):
     salon = models.ForeignKey(Salon, on_delete=models.CASCADE)
-    time = models.ForeignKey(Date, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
 

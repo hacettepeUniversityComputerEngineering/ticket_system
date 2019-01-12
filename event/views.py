@@ -1,9 +1,9 @@
 from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm, NewEventForm, \
-    NewActorForm
+    NewActorForm, NewSeanceForm, NewCityForm
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
-from .models import Category, Event, CityEvent, Seance, Salon, Actor, City, Schedule, Director, EventOwner,ActorEvent
+from .models import Category, Event, CityEvent, Seance, Salon, Actor, City, Schedule, Director, EventOwner, ActorEvent
 
 
 # her etkinliğin fiyatı olmalı
@@ -42,26 +42,59 @@ def call_home(request):
 def event_details(request, pk):
     event = get_object_or_404(Event, pk=pk)
     cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
+
+    seances = Seance.objects.all()
+    new_actor_form = NewActorForm()
+    new_seance_form = NewSeanceForm()
+    new_city_form = NewCityForm()
+
+    if request.method == 'POST':
+        if "city" in request.POST:
+            new_city_form = NewCityForm(request.POST)
+            if new_city_form.is_valid():
+                city_name = new_city_form.cleaned_data['city_name']
+                create_city(city_name, pk)
+        elif "seance" in request.POST:
+            new_seance_form = NewSeanceForm(request.POST)
+            if new_seance_form.is_valid():
+                salon_name = new_seance_form.cleaned_data['salon_name']
+                date = new_seance_form.cleaned_data['date']
+                time = new_seance_form.cleaned_data['time']
+        elif "actor" in request.POST:
+            new_actor_form = NewActorForm(request.POST)
+            if new_actor_form.is_valid():
+                actor_name = new_actor_form.cleaned_data['actor_name']
+                create_new_actor(actor_name, pk)
+
     actor_events = ActorEvent.objects.filter(event__pk=pk)
     actors = []
     for ae in actor_events:
-        actors.append(Actor.objects.filter(pk=ae.actor.pk))
+        actors += Actor.objects.filter(pk=ae.actor.pk).values()
 
-    for city in cities:
-        print(city.event.name)
-    seances = Seance.objects.all()
-    new_actor_form = NewActorForm()
-    if request.method == 'POST':
-        new_actor_form = NewActorForm(request.POST)
-        if new_actor_form.is_valid():
-            actor_name = new_actor_form.cleaned_data['actor_name']
-            create_new_actor(actor_name, pk)
     return render(request, 'event_details.html', {'event': event,
                                                   'cities': cities,
                                                   'seances': seances,
                                                   'actors': actors,
                                                   'new_actor_form': new_actor_form,
+                                                  'new_seance_form': new_seance_form,
+                                                  'new_city_form': new_city_form,
                                                   })
+
+
+def create_city(city_name, pk):
+    this_event = Event.objects.get(pk=pk)
+    try:
+        this_city = City.objects.get(name=city_name)
+    except:
+        City.objects.update_or_create(name=city_name)
+        this_city = City.objects.get(name=city_name)
+    CityEvent.objects.update_or_create(city=this_city, event=this_event)
+
+
+
+
+
+
 
 
 def create_new_actor(name, event_pk):
@@ -69,9 +102,9 @@ def create_new_actor(name, event_pk):
     try:
         this_actor = Actor.objects.get(name=name)
     except:
-        Actor.objects.update_or_create(name=name, event=this_event)
-        this_actor = Actor.objects.get(name=name, event=this_event)
-    ActorEvent.objects.update_or_create(event=this_event,actor=this_actor)
+        Actor.objects.update_or_create(name=name)
+        this_actor = Actor.objects.get(name=name)
+    ActorEvent.objects.update_or_create(event=this_event, actor=this_actor)
 
 
 # seda

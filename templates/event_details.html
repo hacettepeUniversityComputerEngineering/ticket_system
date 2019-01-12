@@ -21,6 +21,7 @@
                             <form method="POST" class="post-form">
                                 {% csrf_token %}
                                 {{ new_actor_form }}
+                                <input type="hidden" name="actor">
                             </form>
                         </div>
                     </div>
@@ -35,8 +36,9 @@
                     </div>
                 </div>
                 <div class="col-sm-6">
+
                     {% for city in cities %}
-                        <div class="card mb-8">
+                        <div class="card mb-3">
                             <div class="card-body">
                                 <h5 class="card-title">{{ city.city.name }} </h5>
                                 <h6 class="card-text">{{ city.building }}</h6>
@@ -45,15 +47,31 @@
                                 {% for seance in seances %}
                                     {% if seance.salon == city.salon %}
                                         <p> {{ seance.time.date }} {{ seance.time.time }} <a href="#">
-                                            <button class="btn btn-outline-secondary" type="submit" id="button-addon2">
+                                            <button class="btn btn-outline-secondary" type="submit"
+                                                    id="button-addon2">
                                                 Bilet Al
                                             </button>
                                         </a></p>
                                     {% endif %}
                                 {% endfor %}
+                                <form method="POST" class="post-form">
+                                    {% csrf_token %}
+                                    {{ new_seance_form.salon_name }}
+                                    {{ new_seance_form.date }}
+                                    {{ new_seance_form.time }}
+                                    <input type="hidden" name="seance">
+                                </form>
                             </div>
                         </div>
                     {% endfor %}
+
+
+                    <form method="POST" class="post-form">
+                        {% csrf_token %}
+                        {{ new_city_form.as_p }}
+                        <input type="hidden" name="city">
+                    </form>
+
                 </div>
 
             </div>

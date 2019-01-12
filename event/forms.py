@@ -117,3 +117,33 @@ class NewActorForm(forms.Form):
             'placeholder': 'Actor Name Surname',
         }
     ))
+
+
+class NewSeanceForm(forms.Form):
+    salon_name = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Salon',
+        }
+    ))
+    date = forms.DateField(label="", widget=forms.DateInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Date',
+        }
+    ))
+    time = forms.TimeField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Time',
+        }
+    ))
+
+
+class NewCityForm(forms.Form):
+    city_name = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'City',
+        }
+    ))
