@@ -12,8 +12,9 @@
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ event.name }}</h5>
+                            <p>{{ event.text }}</p>
                             <p class="card-text">
-                            <p> Yönetmen: {{ event.director.name }}</p>
+                            <h6>Director:</h6>  <p>{{ event.director.name }}</p>
                             <h6>Oyuncular</h6>
                             {% for actor in actors %}
                                 <p>{{ actor.name }}</p>
@@ -27,7 +28,7 @@
                             {% endif %}
                         </div>
                     </div>
-
+                    <p>Total {{ comment_count }} comments were find.</p>
                     {% for comment in comments %}
                         <div class="card mb-2">
                             <div class="card-body">

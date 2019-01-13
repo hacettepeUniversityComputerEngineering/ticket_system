@@ -7,6 +7,7 @@ from .models import Category, Event, CityEvent, Seance, Actor, City, Schedule, D
 from django.views.generic import CreateView
 from ticket_system.forms import SignUpForm
 from user.models import User
+from django.db.models import Avg, Count
 
 
 # **** YAPILACAKLAR ****
@@ -20,6 +21,8 @@ def call_home(request):
     city_form = SelectCity()
     category_form = SelectCategory
     all_events = Event.objects.all()
+    all_events_number = all_events.aggregate(Count('pk'))
+    all_events_number = all_events_number['pk__count']
     if request.method == 'POST':
         if "search" in request.POST:
             form = SearchForm(request.POST)
@@ -39,12 +42,15 @@ def call_home(request):
             if category_form.is_valid():
                 category_name = category_form.cleaned_data.get('category_name')
             all_events = get_events(city_name, category_name)
+            # all_events_number = all_events.aggregate(Count('pk'))
+            # all_events_number = all_events_number['pk__count']
         elif "delete_event" in request.POST:
             event_pk = request.POST['delete_event']
             Event.objects.get(pk=event_pk).delete()
 
     return render(request, 'home.html',
-                  {"form": form, "all_events": all_events, "city_form": city_form, "category_form": category_form})
+                  {"form": form, "all_events": all_events, "city_form": city_form, "category_form": category_form,
+                   "all_events_number": all_events_number})
 
 
 # seda
@@ -52,7 +58,9 @@ def call_home(request):
 # @onlyUser_required
 # @admin_required
 def event_details(request, pk):
+    comment_count = 0
     print(request.user.pk)
+    event = Event.objects.get(pk=pk)
     city_event = CityEvent.objects.filter(event__pk=pk).order_by('city')
     building_event = BuildingEvent.objects.filter(event__pk=pk)
     salon_event = SalonEvent.objects.filter(event__pk=pk)
@@ -114,8 +122,8 @@ def event_details(request, pk):
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
                 comment = comment_form.cleaned_data['comment']
-                print(request.user)
-                create_comment(comment, pk, request)
+                create_comment(comment, pk)
+    comment_count = Comment.objects.filter(event__pk=pk).aggregate(Count('pk'))['pk__count']
 
     actor_events = ActorEvent.objects.filter(event__pk=pk)
     actors = []
@@ -135,14 +143,16 @@ def event_details(request, pk):
         'new_building_form': new_building_form,
         'comment_form': comment_form,
         'comments': comments,
+        'comment_count': comment_count,
+        'event': event
 
     })
 
 
-def create_comment(comment, event_pk, request):
+def create_comment(comment, event_pk):
     event = Event.objects.get(pk=event_pk)
-    userinf = UserInformation.objects.get(user__pk=request.user.pk)
-    Comment.objects.update_or_create(text=comment, user=userinf, event=event)
+    # userinf = UserInformation.objects.get(user__pk=request.user.pk)
+    Comment.objects.update_or_create(text=comment, event=event)
 
 
 def create_new_building(building_name, event_pk, city_pk):
@@ -197,13 +207,14 @@ def get_events(city_name, category_name):
 
 def buy_ticket(request):
     # event = Event.objects.all(pk=pk)
+    price = 32
     person_count_form = SelectPersonCount()
     if request.method == 'POST':
         person_count_form = SelectPersonCount(request.POST)
         if person_count_form.is_valid():
             person_count = person_count_form.cleaned_data['person_count']
-            print(person_count)
-    return render(request, 'buy_ticket.html', {'person_count_form': person_count_form})
+            price = person_count * 12
+    return render(request, 'buy_ticket.html', {'person_count_form': person_count_form, 'price': price})
 
 
 def payment(request):
@@ -234,12 +245,13 @@ def new_event(request):
             category_name = new_event_form.cleaned_data['category_name']
             event_owner = new_event_form.cleaned_data['event_owner']
             director = new_event_form.cleaned_data['director']
-            create_new_event(event_name, category_name, event_owner, director)
+            content = new_event_form.cleaned_data['content']
+            create_new_event(event_name, category_name, event_owner, director, content)
             return redirect('home_page')
     return render(request, 'new_event.html', {'new_event_form': new_event_form})
 
 
-def create_new_event(event_name, category_name, event_owner, director):
+def create_new_event(event_name, category_name, event_owner, director, content):
     Director.objects.update_or_create(name=director)
     this_director = Director.objects.get(name=director)
 
@@ -250,7 +262,7 @@ def create_new_event(event_name, category_name, event_owner, director):
     this_category = Category.objects.get(name=category_name)
 
     Event.objects.update_or_create(name=event_name, director=this_director, event_owner=this_owner,
-                                   category_name=this_category)
+                                   category_name=this_category, text=content)
 
 
 class SignUpView(CreateView):

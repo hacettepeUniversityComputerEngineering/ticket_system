@@ -2,6 +2,7 @@ from django.db import models
 from user.models import User,UserInformation
 
 
+
 class Category(models.Model):
     name = models.CharField(max_length=200)
 
@@ -53,6 +54,8 @@ class Event(models.Model):
     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     event_owner = models.ForeignKey(EventOwner, on_delete=models.CASCADE)
     director = models.ForeignKey(Director, on_delete=models.CASCADE)
+    price = models.IntegerField(default=12)
+    text = models.CharField(max_length=300)
 
     def __str__(self):
         return self.name

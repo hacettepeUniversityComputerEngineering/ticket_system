@@ -108,6 +108,12 @@ class NewEventForm(forms.Form):
             'placeholder': 'Add Director',
         }
     ))
+    content = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Add Content',
+        }
+    ))
 
 
 class NewActorForm(forms.Form):
