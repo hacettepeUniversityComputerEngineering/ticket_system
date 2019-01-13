@@ -87,25 +87,25 @@ class NewEventForm(forms.Form):
     event_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Event Name',
+            'placeholder': 'Add Event Name',
         }
     ))
     category_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Category Name',
+            'placeholder': 'Add Category Name',
         }
     ))
     event_owner = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Event Owner',
+            'placeholder': 'Add Event Owner',
         }
     ))
     director = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Director',
+            'placeholder': 'Add Director',
         }
     ))
 
@@ -114,7 +114,7 @@ class NewActorForm(forms.Form):
     actor_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Actor Name Surname',
+            'placeholder': 'Add Actor Name Surname',
         }
     ))
 
@@ -123,19 +123,19 @@ class NewSeanceForm(forms.Form):
     salon_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Salon',
+            'placeholder': 'Add Salon',
         }
     ))
     date = forms.DateField(label="", widget=forms.DateInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Date',
+            'placeholder': 'Add Date',
         }
     ))
     time = forms.TimeField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Time',
+            'placeholder': 'Add Time',
         }
     ))
 
@@ -144,6 +144,6 @@ class NewCityForm(forms.Form):
     city_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'City',
+            'placeholder': 'Add City',
         }
     ))

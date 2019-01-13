@@ -34,6 +34,10 @@ def call_home(request):
             if category_form.is_valid():
                 category_name = category_form.cleaned_data.get('category_name')
             all_events = get_events(city_name, category_name)
+        elif "delete_event" in request.POST:
+            event_pk = request.POST['delete_event']
+            Event.objects.get(pk=event_pk).delete()
+
     return render(request, 'home.html',
                   {"form": form, "all_events": all_events, "city_form": city_form, "category_form": category_form})
 
@@ -89,12 +93,6 @@ def create_city(city_name, pk):
         City.objects.update_or_create(name=city_name)
         this_city = City.objects.get(name=city_name)
     CityEvent.objects.update_or_create(city=this_city, event=this_event)
-
-
-
-
-
-
 
 
 def create_new_actor(name, event_pk):
@@ -174,6 +172,7 @@ def new_event(request):
             event_owner = new_event_form.cleaned_data['event_owner']
             director = new_event_form.cleaned_data['director']
             create_new_event(event_name, category_name, event_owner, director)
+            return redirect('home_page')
     return render(request, 'new_event.html', {'new_event_form': new_event_form})
 
 
