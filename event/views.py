@@ -1,13 +1,16 @@
 from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm, NewEventForm, \
     NewActorForm, NewSeanceForm, NewCityForm, NewBuildingForm, CommentForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from .models import Category, Event, CityEvent, Seance, Actor, City, Schedule, Director, EventOwner, ActorEvent, \
     BuildingEvent, SalonEvent, Building, Salon, Comment, UserInformation
 from django.views.generic import CreateView
-from ticket_system.forms import SignUpForm
 from user.models import User
 from django.db.models import Avg, Count
+from django.contrib.auth import get_user_model
+from ticket_system.decorators import admin_required
+from django.contrib.auth.forms import UserCreationForm
+
 
 
 # **** YAPILACAKLAR ****
@@ -55,6 +58,7 @@ def call_home(request):
 
 # seda
 
+
 # @onlyUser_required
 # @admin_required
 def event_details(request, pk):
@@ -73,6 +77,7 @@ def event_details(request, pk):
     new_city_form = NewCityForm()
     new_building_form = NewBuildingForm()
     comment_form = CommentForm()
+
 
     if request.method == 'POST':
         if "city" in request.POST:
@@ -127,6 +132,7 @@ def event_details(request, pk):
 
     actor_events = ActorEvent.objects.filter(event__pk=pk)
     actors = []
+
     for ae in actor_events:
         actors += Actor.objects.filter(pk=ae.actor.pk).values()
 
@@ -265,16 +271,16 @@ def create_new_event(event_name, category_name, event_owner, director, content):
                                    category_name=this_category, text=content)
 
 
-class SignUpView(CreateView):
-    model = User
-    form_class = SignUpForm
-    template_name = 'signup.html'
-
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'onlyUser'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return redirect('home_page')
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            raw_password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home_page')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})

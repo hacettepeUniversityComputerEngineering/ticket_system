@@ -1,7 +1,6 @@
 from django.db import models
 from user.models import User,UserInformation
-
-
+from user.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
