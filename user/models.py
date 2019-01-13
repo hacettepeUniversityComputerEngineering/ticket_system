@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractUser
 # Create your models here.
 class UserType(AbstractUser):
     is_onlyUser = models.BooleanField(default=False)
+    is_admin = models.BooleanField(default=False)
 
 
 class User(models.Model):

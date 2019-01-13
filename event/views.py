@@ -5,6 +5,7 @@ from django.views.generic import CreateView
 from .models import Category, Event, CityEvent, Seance, Salon, Actor
 from ticket_system.forms import SignUpForm
 from user.models import User
+from ticket_system.decorators import onlyUser_required, admin_required
 # Create your views here.
 
 
@@ -17,6 +18,8 @@ def deneme_home(request):
     return render(request, 'home.html', {'events': events})
 
 
+@admin_required
+# veya @onlyUser_required
 def event_details(request, pk):
     event = get_object_or_404(Event, pk=pk)
     cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
