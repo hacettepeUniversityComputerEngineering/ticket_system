@@ -5,10 +5,10 @@ from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm
 from .models import Category, Event, CityEvent, Seance, Salon, Actor, City, Schedule, Director, EventOwner, ActorEvent
 from django.views.generic import CreateView
-from ticket_system.forms import SignUpForm
 from user.models import User
-from ticket_system.decorators import onlyUser_required, admin_required
-
+from django.contrib.auth import get_user_model
+from ticket_system.decorators import admin_required
+from django.contrib.auth.forms import UserCreationForm
 
 # Create your views here.
 
@@ -55,12 +55,10 @@ def call_home(request):
 def event_details(request, pk):
     event = get_object_or_404(Event, pk=pk)
     cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
-
     seances = Seance.objects.all()
     new_actor_form = NewActorForm()
     new_seance_form = NewSeanceForm()
     new_city_form = NewCityForm()
-
     if request.method == 'POST':
         if "city" in request.POST:
             new_city_form = NewCityForm(request.POST)
@@ -81,6 +79,7 @@ def event_details(request, pk):
 
     actor_events = ActorEvent.objects.filter(event__pk=pk)
     actors = []
+
     for ae in actor_events:
         actors += Actor.objects.filter(pk=ae.actor.pk).values()
 
@@ -112,22 +111,6 @@ def create_new_actor(name, event_pk):
         Actor.objects.update_or_create(name=name)
         this_actor = Actor.objects.get(name=name)
     ActorEvent.objects.update_or_create(event=this_event, actor=this_actor)
-
-
-# seda
-def signup(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            raw_password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('home_page')
-    else:
-        form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
 
 
 def get_events(city_name, category_name):
@@ -200,16 +183,16 @@ def create_new_event(event_name, category_name, event_owner, director):
                                    category_name=this_category)
 
 
-class SignUpView(CreateView):
-    model = User
-    form_class = SignUpForm
-    template_name = 'signup.html'
-
-    def get_context_data(self, **kwargs):
-        kwargs['user_type'] = 'onlyUser'
-        return super().get_context_data(**kwargs)
-
-    def form_valid(self, form):
-        user = form.save()
-        login(self.request, user)
-        return redirect('home_page')
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data['username']
+            raw_password = form.cleaned_data['password1']
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            return redirect('home_page')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})

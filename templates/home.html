@@ -13,8 +13,10 @@
             </form>
         </div>
         <div class="container">
+            {% if user.is_superuser %}
             <a class="btn btn-success col-sm-2 offset-10 mb-5" href="{% url 'new_event' %}" role="button">Add New
                 Event</a>
+            {% endif %}
             <div class="card-deck">
                 {% for event in all_events %}
                     <div class="col-sm-4">

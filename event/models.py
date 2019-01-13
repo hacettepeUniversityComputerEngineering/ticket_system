@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-
+from user.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=200)

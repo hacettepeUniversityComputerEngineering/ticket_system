@@ -18,59 +18,163 @@
                             {% for actor in actors %}
                                 <p>{{ actor.name }}</p>
                             {% endfor %}
-                            <form method="POST" class="post-form">
-                                {% csrf_token %}
-                                {{ new_actor_form }}
-                                <input type="hidden" name="actor">
-                            </form>
-                        </div>
-                    </div>
-                    <div class="card mb-2">
-                        <div class="card-body">
-                            <blockquote class="blockquote mb-0">
-                                <p>
-                                    yorumlar
-                                </p>
-                            </blockquote>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-
-                    {% for city in cities %}
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ city.city.name }} </h5>
-                                <h6 class="card-text">{{ city.building }}</h6>
-                                <p> Salon: {{ city.salon }}</p>
-                                <p>Seanslar:</p>
-                                {% for seance in seances %}
-                                    {% if seance.salon == city.salon %}
-                                        <p> {{ seance.time.date }} {{ seance.time.time }} <a href="#">
-                                            <button class="btn btn-outline-secondary" type="submit"
-                                                    id="button-addon2">
-                                                Bilet Al
-                                            </button>
-                                        </a></p>
-                                    {% endif %}
-                                {% endfor %}
+                            {% if user.is_superuser %}
                                 <form method="POST" class="post-form">
                                     {% csrf_token %}
-                                    {{ new_seance_form.salon_name }}
-                                    {{ new_seance_form.date }}
-                                    {{ new_seance_form.time }}
-                                    <input type="hidden" name="seance">
+                                    {{ new_actor_form }}
+                                    <input type="hidden" name="actor">
                                 </form>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% for comment in comments %}
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                {{ comment.text }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    {#                            <blockquote class="blockquote mb-0">#}
+                    {#                               #}
+                    {#                            </blockquote>#}
+                    {#                       #}
+                    <form method="POST" class="post-form">
+                        {% csrf_token %}
+                        {{ comment_form }}
+                        {#                                    <input type="hidden" name="comment">#}
+                    </form>
+                </div>
+
+                <div class="col-sm-6">
+                    {% for c_e in city_event %}
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <form method="POST" class="post-form">
+                                    {% csrf_token %}
+                                    {% if user.is_superuser %}
+                                        <button type="submit" class="btn btn-danger col-sm-3 offset-8 mt-2">Delete City
+                                        </button>
+                                    {% endif %}
+                                    <input type="hidden" name="delete_city" value="{{ c_e.city.pk }}">
+                                </form>
+                                <div class="row">
+                                    <h5 class="card-title">City Name: </h5>
+                                    <p> {{ c_e.city.name }}</p>
+                                </div>
+                                {% for b_e in building_event %}
+                                    {% if b_e.building.city == c_e.city %}
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                <form method="POST" class="post-form">
+                                                    {% csrf_token %}
+                                                    {% if user.is_superuser %}
+                                                        <button type="submit"
+                                                                class="btn btn-danger col-sm-4 offset-8 mt-2">Delete
+                                                            Bilding
+                                                        </button>
+                                                    {% endif %}
+                                                    <input type="hidden" name="delete_building"
+                                                           value="{{ b_e.building.pk }}">
+                                                </form>
+
+                                                <div class="row">
+                                                    <h6 class="card-text">Building Name: </h6>
+                                                    <p> {{ b_e.building.name }}</p>
+                                                </div>
+                                                {% for s_e in salon_event %}
+                                                    {% if s_e.salon.building == b_e.building %}
+                                                        <div class="card mb-3">
+                                                            <div class="card-body">
+                                                                <h6 class="card-text">Salon: {{ s_e.salon.name }}</h6>
+                                                                {% for s in seances %}
+                                                                    {% if s.salon.name == s_e.salon.name %}
+                                                                        <form method="POST" class="post-form">
+                                                                            {% csrf_token %}
+                                                                            {% if user.is_superuser %}
+                                                                                <button type="submit"
+                                                                                        class="btn btn-danger col-sm-4 offset-8 mt-2">
+                                                                                    Delete Seance
+                                                                                </button>
+                                                                            {% endif %}
+                                                                            <input type="hidden" name="delete_seance"
+                                                                                   value="{{ s.pk }}">
+                                                                            <input type="hidden" name="delete_salon"
+                                                                                   value="{{ s_e.salon.pk }}">
+                                                                        </form>
+                                                                        <h6 class="card-text">{{ s.date }}</h6>
+                                                                        <h6 class="card-text">{{ s.time }}</h6>
+                                                                        <form method="POST" class="post-form">
+                                                                            {% csrf_token %}
+                                                                            <a class="btn btn-secondary col-sm-4 offset-8 mb-5"
+                                                                               href="{% url 'buy_ticket' %}"
+                                                                               role="button">Buy Ticket</a>
+                                                                            <input type="hidden" name="buy_ticket"
+                                                                                   value="{{ s_e.event.pk }}">
+                                                                        </form>
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                            </div>
+                                                        </div>
+                                                    {% endif %}
+                                                {% endfor %}
+
+                                                {% if user.is_superuser %}
+                                                    <form method="POST" class="post-form">
+                                                        {% csrf_token %}
+                                                        {{ new_seance_form.salon_name }}
+                                                        {{ new_seance_form.date }}
+                                                        {{ new_seance_form.time }}
+                                                        <input type="hidden" name="seance">
+                                                        <input type="hidden" name="city_pk" value="{{ c_e.city.pk }}">
+                                                        <input type="hidden" name="building_pk"
+                                                               value="{{ b_e.building.pk }}">
+                                                        <button type="submit" name="seance" class="btn btn-dark">
+                                                            Add New Salon and Seance
+                                                        </button>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    {% endif %}
+
+                                {% endfor %}
+                                {% if user.is_superuser %}
+                                    <form method="POST" class="post-form">
+                                        {% csrf_token %}
+                                        {{ new_building_form }}
+                                        <input type="hidden" name="city_pk" value="{{ c_e.city.pk }}">
+                                        <button type="submit" name="building" class="btn btn-dark">
+                                            Add New Building
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+
+
+                                {#                                <p>Seanslar:</p>#}
+                                {#                                {% for seance in seances %}#}
+                                {#                                    {% if seance.salon == city.salon %}#}
+                                {#                                        <p> {{ seance.time.date }} {{ seance.time.time }} <a href="#">#}
+                                {#                                            <button class="btn btn-outline-secondary" type="submit"#}
+                                {#                                                    id="button-addon2">#}
+                                {#                                                Bilet Al#}
+                                {#                                            </button>#}
+                                {#                                        </a></p>#}
+                                {#                                    {% endif %}#}
+                                {#                                {% endfor %}#}
+
                             </div>
                         </div>
                     {% endfor %}
 
-
-                    <form method="POST" class="post-form">
-                        {% csrf_token %}
-                        {{ new_city_form.as_p }}
-                        <input type="hidden" name="city">
-                    </form>
+                    {% if user.is_superuser %}
+                        <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            {{ new_city_form.as_p }}
+                            <input type="hidden" name="city">
+                        </form>
+                    {% endif %}
 
                 </div>
 

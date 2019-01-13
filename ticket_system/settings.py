@@ -27,8 +27,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Application definition
-AUTH_USER_MODEL = "user.UserType"
-LOGIN_REDIRECT_URL = 'event_page'
+LOGIN_REDIRECT_URL = 'home_page'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -82,7 +81,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'USER': 'root',
-        'PASSWORD': 'masa1453',
+        'PASSWORD': '',
     }}
 
 # Password validation
