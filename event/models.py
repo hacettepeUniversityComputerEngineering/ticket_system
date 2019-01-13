@@ -34,7 +34,7 @@ class City(models.Model):
 class Building(models.Model):
     name = models.CharField(max_length=200)
     address = models.CharField(max_length=200)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='buildingCity')
 
     def __str__(self):
         return self.name
@@ -58,6 +58,9 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        ordering = ('name',)
+
 
 class Actor(models.Model):
     name = models.CharField(max_length=200)
@@ -69,6 +72,9 @@ class Actor(models.Model):
 class ActorEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.event.name + "-" + self.actor.name
 
 
 class CityEvent(models.Model):
