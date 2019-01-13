@@ -13,15 +13,21 @@
             </form>
         </div>
         <div class="container">
-            <a class="btn btn-success col-sm-2 offset-10 mb-5" href="{% url 'new_event' %}" role="button">Add New
-                Event</a>
+
+            {% if user.is_superuser %}
+                <a class="btn btn-success col-sm-2 offset-10 mb-5" href="{% url 'new_event' %}" role="button">Add New
+                    Event</a>
+            {% endif %}
+
             <div class="card-deck">
                 {% for event in all_events %}
                     <div class="col-sm-4">
                         <div class="card mb-4">
                             <form method="POST" class="post-form">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-danger col-sm-3 offset-8 mt-2">Delete</button>
+                                {% if user.is_superuser %}
+                                    <button type="submit" class="btn btn-danger col-sm-3 offset-8 mt-2">Delete</button>
+                                {% endif %}
                                 <input type="hidden" name="delete_event" value="{{ event.pk }}">
                             </form>
                             <div class="card-body ">
