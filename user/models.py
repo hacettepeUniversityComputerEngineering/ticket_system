@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+# from django.contrib.auth.models import User
 
 # Create your models here.
 class UserType(AbstractUser):
@@ -8,19 +8,28 @@ class UserType(AbstractUser):
     is_admin = models.BooleanField(default=False)
 
 
+
 class User(models.Model):
     user = models.OneToOneField(UserType, on_delete=models.CASCADE, null=True, related_name='onlyUser')
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
-    mobile_number = models.CharField(max_length=200)
-    money = models.FloatField(null=True)
-    credit_card_number = models.CharField(max_length=200, null=True)
+    # email = models.EmailField(unique=True)
+    # mobile_number = models.CharField(max_length=200)
+    # money = models.FloatField(null=True)
+    # credit_card_number = models.CharField(max_length=200, null=True)
 
     USERNAME_FIELD = 'username'
 
     def __str__(self):
         return self.username
+
+
+class UserInformation(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(unique=True)
+    mobile_number = models.CharField(max_length=200)
+    money = models.FloatField(null=True)
+    credit_card_number = models.CharField(max_length=200, null=True)
 
 
 class PastEvent(models.Model):

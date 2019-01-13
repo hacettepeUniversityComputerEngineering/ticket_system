@@ -1,7 +1,7 @@
 from django.db import models
 from event.models import Salon, Block, Seat, Event
 from user.models import User
-# Create your models here.
+# from django.contrib.auth.models import User
 
 class Ticket(models.Model):
     total_ticket_price = models.FloatField()

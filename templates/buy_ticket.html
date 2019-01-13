@@ -7,7 +7,12 @@
                     <form method="POST" class="post-form mb-5">
                         {% csrf_token %}
                         {{ person_count_form.as_p }}
-                        <button type="submit" name="city_category" class="btn btn-dark col-sm-8 offset-2">Continue</button>
+                        <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            <a class="btn btn-dark col-sm-8 offset-2 mb-5" href="{% url 'payment_screen' %}"
+                               role="button">Continue</a>
+{#                            <input type="hidden" name="buy_ticket" value="{{ s_e.event.pk }}">#}
+                        </form>
                     </form>
                 </div>
             </div>

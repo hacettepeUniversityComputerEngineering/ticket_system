@@ -1,20 +1,18 @@
 from event.forms import SearchForm, SelectCategory, SelectCity, SelectPersonCount, PaymentForm, NewEventForm, \
-    NewActorForm, NewSeanceForm, NewCityForm
+    NewActorForm, NewSeanceForm, NewCityForm, NewBuildingForm, CommentForm
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.forms import UserCreationForm
-from .models import Category, Event, CityEvent, Seance, Salon, Actor, City, Schedule, Director, EventOwner, ActorEvent
+from django.contrib.auth import login
+from .models import Category, Event, CityEvent, Seance, Actor, City, Schedule, Director, EventOwner, ActorEvent, \
+    BuildingEvent, SalonEvent, Building, Salon, Comment, UserInformation
 from django.views.generic import CreateView
 from ticket_system.forms import SignUpForm
 from user.models import User
-from ticket_system.decorators import onlyUser_required, admin_required
 
 
-# Create your views here.
-
-
+# **** YAPILACAKLAR ****
 # her etkinliğin fiyatı olmalı
 # her etkinlik için açıklama attribute'u ekle
+
 
 # elmas
 def call_home(request):
@@ -54,13 +52,19 @@ def call_home(request):
 # @onlyUser_required
 # @admin_required
 def event_details(request, pk):
-    event = get_object_or_404(Event, pk=pk)
-    cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
+    print(request.user.pk)
+    city_event = CityEvent.objects.filter(event__pk=pk).order_by('city')
+    building_event = BuildingEvent.objects.filter(event__pk=pk)
+    salon_event = SalonEvent.objects.filter(event__pk=pk)
+    seances = Seance.objects.filter(event__pk=pk)
+    comments = Comment.objects.filter(event__pk=pk)
 
-    seances = Seance.objects.all()
+    # seances = Seance.objects.all()
     new_actor_form = NewActorForm()
     new_seance_form = NewSeanceForm()
     new_city_form = NewCityForm()
+    new_building_form = NewBuildingForm()
+    comment_form = CommentForm()
 
     if request.method == 'POST':
         if "city" in request.POST:
@@ -68,31 +72,96 @@ def event_details(request, pk):
             if new_city_form.is_valid():
                 city_name = new_city_form.cleaned_data['city_name']
                 create_city(city_name, pk)
+        if "building" in request.POST:
+            new_building_form = NewBuildingForm(request.POST)
+            if new_building_form.is_valid():
+                building_name = new_building_form.cleaned_data['building_name']
+                city_pk = request.POST['city_pk']
+                create_new_building(building_name, pk, city_pk)
+
+
         elif "seance" in request.POST:
             new_seance_form = NewSeanceForm(request.POST)
             if new_seance_form.is_valid():
                 salon_name = new_seance_form.cleaned_data['salon_name']
                 date = new_seance_form.cleaned_data['date']
                 time = new_seance_form.cleaned_data['time']
+                city_pk = request.POST['city_pk']
+                building_pk = request.POST['building_pk']
+                create_new_seance(building_pk, salon_name, date, time, pk)
+
         elif "actor" in request.POST:
             new_actor_form = NewActorForm(request.POST)
             if new_actor_form.is_valid():
                 actor_name = new_actor_form.cleaned_data['actor_name']
                 create_new_actor(actor_name, pk)
 
+        elif "delete_city" in request.POST:
+            city_pk = request.POST['delete_city']
+            City.objects.get(pk=city_pk).delete()
+
+        elif "delete_building" in request.POST:
+            building_pk = request.POST['delete_building']
+            Building.objects.get(pk=building_pk).delete()
+
+        elif "delete_seance" in request.POST:
+            seance_pk = request.POST['delete_seance']
+            salon_pk = request.POST['delete_salon']
+            Seance.objects.get(pk=seance_pk).delete()
+            SalonEvent.objects.get(pk=salon_pk).delete()
+
+        elif "comment" in request.POST:
+            comment_form = CommentForm(request.POST)
+            if comment_form.is_valid():
+                comment = comment_form.cleaned_data['comment']
+                print(request.user)
+                create_comment(comment, pk, request)
+
     actor_events = ActorEvent.objects.filter(event__pk=pk)
     actors = []
     for ae in actor_events:
         actors += Actor.objects.filter(pk=ae.actor.pk).values()
 
-    return render(request, 'event_details.html', {'event': event,
-                                                  'cities': cities,
-                                                  'seances': seances,
-                                                  'actors': actors,
-                                                  'new_actor_form': new_actor_form,
-                                                  'new_seance_form': new_seance_form,
-                                                  'new_city_form': new_city_form,
-                                                  })
+    return render(request, 'event_details.html', {
+        # 'event': event,
+        'city_event': city_event,
+        'salon_event': salon_event,
+        'building_event': building_event,
+        'seances': seances,
+        'actors': actors,
+        'new_actor_form': new_actor_form,
+        'new_seance_form': new_seance_form,
+        'new_city_form': new_city_form,
+        'new_building_form': new_building_form,
+        'comment_form': comment_form,
+        'comments': comments,
+
+    })
+
+
+def create_comment(comment, event_pk, request):
+    event = Event.objects.get(pk=event_pk)
+    userinf = UserInformation.objects.get(user__pk=request.user.pk)
+    Comment.objects.update_or_create(text=comment, user=userinf, event=event)
+
+
+def create_new_building(building_name, event_pk, city_pk):
+    event = Event.objects.get(pk=event_pk)
+    city = City.objects.get(pk=city_pk)
+    Building.objects.update_or_create(city=city, name=building_name)
+    building = Building.objects.get(city=city, name=building_name)
+    BuildingEvent.objects.update_or_create(building=building, event=event)
+
+
+def create_new_seance(building_pk, salon_name, date, time, event_pk):
+    event = Event.objects.get(pk=event_pk)
+    building = Building.objects.get(pk=building_pk)
+    Salon.objects.update_or_create(name=salon_name, building=building)
+    salon = Salon.objects.get(name=salon_name, building=building)
+    SalonEvent.objects.update_or_create(salon=salon, event=event)
+    salon = Salon.objects.get(name=salon_name, building=building)
+
+    Seance.objects.update_or_create(date=date, time=time, salon=salon, event=event)
 
 
 def create_city(city_name, pk):
@@ -113,22 +182,6 @@ def create_new_actor(name, event_pk):
         Actor.objects.update_or_create(name=name)
         this_actor = Actor.objects.get(name=name)
     ActorEvent.objects.update_or_create(event=this_event, actor=this_actor)
-
-
-# # seda
-# def signup(request):
-#     if request.method == 'POST':
-#         form = UserCreationForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             username = form.cleaned_data['username']
-#             raw_password = form.cleaned_data['password1']
-#             user = authenticate(username=username, password=raw_password)
-#             login(request, user)
-#             return redirect('home_page')
-#     else:
-#         form = UserCreationForm()
-#     return render(request, 'signup.html', {'form': form})
 
 
 def get_events(city_name, category_name):
@@ -196,7 +249,6 @@ def create_new_event(event_name, category_name, event_owner, director):
     Category.objects.update_or_create(name=category_name)
     this_category = Category.objects.get(name=category_name)
 
-    print(this_category)
     Event.objects.update_or_create(name=event_name, director=this_director, event_owner=this_owner,
                                    category_name=this_category)
 

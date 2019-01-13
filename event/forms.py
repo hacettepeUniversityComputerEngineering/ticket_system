@@ -126,16 +126,25 @@ class NewSeanceForm(forms.Form):
             'placeholder': 'Add Salon',
         }
     ))
-    date = forms.DateField(label="", widget=forms.DateInput(
+    date = forms.DateField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
             'placeholder': 'Add Date',
         }
     ))
-    time = forms.TimeField(label="", widget=forms.TextInput(
+    time = forms.TimeField(label="", widget=forms.TimeInput(format='%H:%M',
+                                                            attrs={
+                                                                'class': 'form-control',
+                                                                'placeholder': 'Add Time',
+                                                            }
+                                                            ))
+
+
+class NewBuildingForm(forms.Form):
+    building_name = forms.CharField(label="", widget=forms.TextInput(
         attrs={
             'class': 'form-control',
-            'placeholder': 'Add Time',
+            'placeholder': 'Add Building',
         }
     ))
 
@@ -145,5 +154,14 @@ class NewCityForm(forms.Form):
         attrs={
             'class': 'form-control',
             'placeholder': 'Add City',
+        }
+    ))
+
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(label="", widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Comment',
         }
     ))

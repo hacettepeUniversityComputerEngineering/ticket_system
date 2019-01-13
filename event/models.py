@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils import timezone
+from user.models import User,UserInformation
 
 
 class Category(models.Model):
@@ -33,7 +33,6 @@ class City(models.Model):
 
 class Building(models.Model):
     name = models.CharField(max_length=200)
-    address = models.CharField(max_length=200)
     city = models.ForeignKey(City, on_delete=models.CASCADE, related_name='buildingCity')
 
     def __str__(self):
@@ -62,6 +61,38 @@ class Event(models.Model):
         ordering = ('name',)
 
 
+class SalonEvent(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    salon = models.ForeignKey(Salon, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.event.name + "-" + self.salon.name
+
+class BuildingEvent(models.Model):
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    building = models.ForeignKey(Building, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.event.name + "-" + self.building.name
+
+# class CityBuildingSalonEvent(models.Model):
+#     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+#     building = models.ForeignKey(Building, on_delete=models.CASCADE)
+#     salon = models.ForeignKey(Salon, on_delete=models.CASCADE)
+#     city = models.ForeignKey(City, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.event.name + "-" + self.city.name+ "-" + self.building.name+ "-" + self.salon.name
+
+# class CityBuildingEvent(models.Model):
+#     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+#     building = models.ForeignKey(Building, on_delete=models.CASCADE)
+#     city = models.ForeignKey(City, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return self.event.name + "-" + self.city.name+ "-" + self.building.name
+
+
 class Actor(models.Model):
     name = models.CharField(max_length=200)
 
@@ -80,6 +111,7 @@ class ActorEvent(models.Model):
 class CityEvent(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
+
 
 
 class Schedule(models.Model):
@@ -107,3 +139,9 @@ class Seat(models.Model):
     number = models.IntegerField()
     seat = models.FloatField()
     block = models.ForeignKey(Block, on_delete=models.CASCADE)
+
+
+class Comment(models.Model):
+    text = models.CharField(max_length=200)
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
