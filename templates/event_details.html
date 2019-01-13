@@ -18,11 +18,13 @@
                             {% for actor in actors %}
                                 <p>{{ actor.name }}</p>
                             {% endfor %}
-                            <form method="POST" class="post-form">
-                                {% csrf_token %}
-                                {{ new_actor_form }}
-                                <input type="hidden" name="actor">
-                            </form>
+                            {% if user.is_superuser %}
+                                <form method="POST" class="post-form">
+                                    {% csrf_token %}
+                                    {{ new_actor_form }}
+                                    <input type="hidden" name="actor">
+                                </form>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="card mb-2">
@@ -54,23 +56,26 @@
                                         </a></p>
                                     {% endif %}
                                 {% endfor %}
-                                <form method="POST" class="post-form">
-                                    {% csrf_token %}
-                                    {{ new_seance_form.salon_name }}
-                                    {{ new_seance_form.date }}
-                                    {{ new_seance_form.time }}
-                                    <input type="hidden" name="seance">
-                                </form>
+                                {% if user.is_superuser %}
+                                    <form method="POST" class="post-form">
+                                        {% csrf_token %}
+                                        {{ new_seance_form.salon_name }}
+                                        {{ new_seance_form.date }}
+                                        {{ new_seance_form.time }}
+                                        <input type="hidden" name="seance">
+                                    </form>
+                                {% endif %}
                             </div>
                         </div>
                     {% endfor %}
 
-
-                    <form method="POST" class="post-form">
-                        {% csrf_token %}
-                        {{ new_city_form.as_p }}
-                        <input type="hidden" name="city">
-                    </form>
+                    {% if user.is_superuser %}
+                        <form method="POST" class="post-form">
+                            {% csrf_token %}
+                            {{ new_city_form.as_p }}
+                            <input type="hidden" name="city">
+                        </form>
+                    {% endif %}
 
                 </div>
 

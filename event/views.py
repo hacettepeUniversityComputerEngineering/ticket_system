@@ -50,8 +50,9 @@ def call_home(request):
 
 
 # seda
-@admin_required
-# veya @onlyUser_required
+
+# @onlyUser_required
+# @admin_required
 def event_details(request, pk):
     event = get_object_or_404(Event, pk=pk)
     cities = CityEvent.objects.filter(event__pk=pk).order_by('city')
@@ -114,20 +115,20 @@ def create_new_actor(name, event_pk):
     ActorEvent.objects.update_or_create(event=this_event, actor=this_actor)
 
 
-# seda
-def signup(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data['username']
-            raw_password = form.cleaned_data['password1']
-            user = authenticate(username=username, password=raw_password)
-            login(request, user)
-            return redirect('home_page')
-    else:
-        form = UserCreationForm()
-    return render(request, 'signup.html', {'form': form})
+# # seda
+# def signup(request):
+#     if request.method == 'POST':
+#         form = UserCreationForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             username = form.cleaned_data['username']
+#             raw_password = form.cleaned_data['password1']
+#             user = authenticate(username=username, password=raw_password)
+#             login(request, user)
+#             return redirect('home_page')
+#     else:
+#         form = UserCreationForm()
+#     return render(request, 'signup.html', {'form': form})
 
 
 def get_events(city_name, category_name):
