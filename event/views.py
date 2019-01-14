@@ -44,6 +44,7 @@ def call_home(request):
             all_events = get_events(city_name, category_name)
             # all_events_number = all_events.aggregate(Count('pk'))
             # all_events_number = all_events_number['pk__count']
+            all_events_number = all_events.__len__()
         elif "delete_event" in request.POST:
             event_pk = request.POST['delete_event']
             Event.objects.get(pk=event_pk).delete()
@@ -98,6 +99,7 @@ def event_details(request, pk):
                 time = new_seance_form.cleaned_data['time']
                 city_pk = request.POST['city_pk']
                 building_pk = request.POST['building_pk']
+                print(date)
                 create_new_seance(building_pk, salon_name, date, time, pk)
 
         elif "actor" in request.POST:
@@ -118,7 +120,7 @@ def event_details(request, pk):
             seance_pk = request.POST['delete_seance']
             salon_pk = request.POST['delete_salon']
             Seance.objects.get(pk=seance_pk).delete()
-            SalonEvent.objects.get(pk=salon_pk).delete()
+            SalonEvent.objects.get(salon__pk=salon_pk,event__pk=pk).delete()
 
         elif "comment" in request.POST:
             comment_form = CommentForm(request.POST)
