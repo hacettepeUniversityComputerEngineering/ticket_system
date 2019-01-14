@@ -49,7 +49,7 @@ class Salon(models.Model):
 
 class Event(models.Model):
     name = models.CharField(max_length=200)
-    poster = models.ImageField
+    # poster = models.ImageField
     category_name = models.ForeignKey(Category, on_delete=models.CASCADE)
     event_owner = models.ForeignKey(EventOwner, on_delete=models.CASCADE)
     director = models.ForeignKey(Director, on_delete=models.CASCADE)
@@ -139,7 +139,7 @@ class Block(models.Model):
 class Seat(models.Model):
     row = models.CharField(max_length=200)
     number = models.IntegerField()
-    seat = models.FloatField()
+    # seat = models.FloatField()
     block = models.ForeignKey(Block, on_delete=models.CASCADE)
 
 

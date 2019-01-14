@@ -13,13 +13,12 @@ from django.contrib.auth.forms import UserCreationForm
 
 
 
-# **** YAPILACAKLAR ****
-# her etkinliğin fiyatı olmalı
-# her etkinlik için açıklama attribute'u ekle
+
 
 
 # elmas
 def call_home(request):
+
     form = SearchForm()
     city_form = SelectCity()
     category_form = SelectCategory
