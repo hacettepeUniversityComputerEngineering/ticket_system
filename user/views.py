@@ -15,7 +15,7 @@ def deneme_profile(request):
     for ticket in tickets:
         print(ticket.event.name)
     comments = Comment.objects.filter(user=user)
-    return render(request, 'profile.html', {'user': user, 'tickets': tickets, 'comments': comments})
+    return render(request, 'profile.html', {'user': user, 'tickets': tickets, 'comments': comments},)
 
 
 def edit_profile(request):

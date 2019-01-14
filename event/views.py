@@ -218,6 +218,7 @@ def buy_ticket(request, pk):
         if person_count_form.is_valid():
             person_count = person_count_form.cleaned_data['person_count']
             price = person_count * 12
+            print(person_count)
     return render(request, 'buy_ticket.html', {'person_count_form': person_count_form, 'price': price, 'event': event})
 
 
@@ -234,8 +235,8 @@ def payment(request, pk):
             phone_number = payment_form.cleaned_data['phone_number']
             last_usage_date = payment_form.cleaned_data['last_usage_date']
             security_number = payment_form.cleaned_data['security_number']
-            Ticket.objects.create(user=request.user, event=event, total_ticket_price=24,
-                ticket_count=2)
+    Ticket.objects.create(user=request.user, event=event, total_ticket_price=36,
+                ticket_count=3)
     return render(request, 'payment_screen.html', {'payment_form': payment_form})
 
 
