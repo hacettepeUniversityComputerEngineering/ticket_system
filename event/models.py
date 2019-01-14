@@ -1,6 +1,6 @@
 from django.db import models
-from user.models import User,UserInformation
-from user.models import User
+from user.models import UserInformation
+from django.contrib.auth.models import User
 
 class Category(models.Model):
     name = models.CharField(max_length=200)
@@ -70,6 +70,7 @@ class SalonEvent(models.Model):
     def __str__(self):
         return self.event.name + "-" + self.salon.name
 
+
 class BuildingEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     building = models.ForeignKey(Building, on_delete=models.CASCADE)
@@ -115,7 +116,6 @@ class CityEvent(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
 
 
-
 class Schedule(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     date = models.DateField()
@@ -145,5 +145,5 @@ class Seat(models.Model):
 
 class Comment(models.Model):
     text = models.CharField(max_length=200)
-    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)

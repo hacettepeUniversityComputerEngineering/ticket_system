@@ -4,13 +4,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from .models import Category, Event, CityEvent, Seance, Actor, City, Schedule, Director, EventOwner, ActorEvent, \
     BuildingEvent, SalonEvent, Building, Salon, Comment, UserInformation
-from django.views.generic import CreateView
-from user.models import User
 from django.db.models import Avg, Count
-from django.contrib.auth import get_user_model
 from ticket_system.decorators import admin_required
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib.auth.models import User
+from ticket.models import Ticket
 
 
 # **** YAPILACAKLAR ****
@@ -127,7 +125,7 @@ def event_details(request, pk):
             comment_form = CommentForm(request.POST)
             if comment_form.is_valid():
                 comment = comment_form.cleaned_data['comment']
-                create_comment(comment, pk)
+                create_comment(request, comment, pk)
     comment_count = Comment.objects.filter(event__pk=pk).aggregate(Count('pk'))['pk__count']
 
     actor_events = ActorEvent.objects.filter(event__pk=pk)
@@ -155,10 +153,10 @@ def event_details(request, pk):
     })
 
 
-def create_comment(comment, event_pk):
+def create_comment(request, comment, event_pk):
     event = Event.objects.get(pk=event_pk)
-    # userinf = UserInformation.objects.get(user__pk=request.user.pk)
-    Comment.objects.update_or_create(text=comment, event=event)
+    user = User.objects.get(id=request.user.id)
+    Comment.objects.update_or_create(user=user, text=comment, event=event)
 
 
 def create_new_building(building_name, event_pk, city_pk):
@@ -211,20 +209,21 @@ def get_events(city_name, category_name):
     return selected_events
 
 
-def buy_ticket(request):
-    # event = Event.objects.all(pk=pk)
-    price = 32
+def buy_ticket(request, pk):
+    event = Event.objects.get(pk=pk)
+    price = event.price
     person_count_form = SelectPersonCount()
     if request.method == 'POST':
         person_count_form = SelectPersonCount(request.POST)
         if person_count_form.is_valid():
             person_count = person_count_form.cleaned_data['person_count']
             price = person_count * 12
-    return render(request, 'buy_ticket.html', {'person_count_form': person_count_form, 'price': price})
+    return render(request, 'buy_ticket.html', {'person_count_form': person_count_form, 'price': price, 'event': event})
 
 
-def payment(request):
+def payment(request, pk):
     payment_form = PaymentForm()
+    event = Event.objects.get(pk=pk)
     if request.method == 'POST':
         payment_form = PaymentForm(request.POST)
         if payment_form.is_valid():
@@ -235,6 +234,8 @@ def payment(request):
             phone_number = payment_form.cleaned_data['phone_number']
             last_usage_date = payment_form.cleaned_data['last_usage_date']
             security_number = payment_form.cleaned_data['security_number']
+            Ticket.objects.create(user=request.user, event=event, total_ticket_price=24,
+                ticket_count=2)
     return render(request, 'payment_screen.html', {'payment_form': payment_form})
 
 

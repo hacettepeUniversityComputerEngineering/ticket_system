@@ -16,16 +16,21 @@
                 </div>
                 <div class="col-sm-5">
                     <div class="card mb-4">
+                         {% for comment in comments %}
                         <div class="card-body">
-                            <h5 class="card-title">10 kullanıcı hareketi buraya yazılır</h5>
+                            <h5 class="card-title">{{ comment.event}} etkinliğine yorum yazılmış</h5>
+                            <h6 class="card-text">{{ comment.text }}</h6>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="card mb-4">
+                        {% for ticket in tickets %}
                         <div class="card-body">
-                            <h5 class="card-title">kullanıcının biletleri buraya yazılır</h5>
+                            <h5 class="card-title">{{ ticket.event.name }} -- {{ ticket.ticket_count }} </h5>
                         </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>

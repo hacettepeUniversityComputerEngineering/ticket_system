@@ -33,6 +33,7 @@
 
                     {% for comment in comments %}
                         <div class="card mb-2">
+                            <h5 class="card-title">{{ comment.user.username }}</h5>
                             <div class="card-body">
                                 {{ comment.text }}
                             </div>
@@ -110,7 +111,7 @@
                                                                         <form method="POST" class="post-form">
                                                                             {% csrf_token %}
                                                                             <a class="btn btn-secondary col-sm-4 offset-8 mb-5"
-                                                                               href="{% url 'buy_ticket' %}"
+                                                                               href="{% url 'buy_ticket' pk=s_e.event.pk %}"
                                                                                role="button">Buy Ticket</a>
                                                                             <input type="hidden" name="buy_ticket"
                                                                                    value="{{ s_e.event.pk }}">
